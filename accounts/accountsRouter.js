@@ -66,6 +66,8 @@ router.post(
      }
 )
 
+
+//PUTs
 router.put(
      '/:id',
      requiredProperty('name'),
@@ -96,6 +98,34 @@ router.put(
           })
      }
 )
+
+//DELETEs
+router.delete(
+     '/:id',
+     (req, res) => {
+          const { id } = req.params
+          knexDb('accounts')
+               .where({ id: id })
+               .delete()
+               .then(count => {
+                    if(count === 1) {
+                         res.status(200).json({
+                              message: 'Account successfully deleted',
+                              numberOfAccountsDeleted: count
+                         })
+                    } else {
+                         res.status(404).json({
+                              message: 'No accounts found'
+                         })
+                    }
+               })
+               .catch(err => {
+                    console.log('DELET / error', err)
+                    res.status(500).json({
+                         message: err.message
+                    })
+               })
+})
 
 //middleware
    function requiredProperty(property) {
