@@ -66,6 +66,37 @@ router.post(
      }
 )
 
+router.put(
+     '/:id',
+     requiredProperty('name'),
+     requiredProperty('budget'),
+     (req, res) => {
+          const { id } = req.params
+          const updatedAccount = req.body
+          knexDb('accounts')
+          .where({ id: id })
+          .update(updatedAccount)
+          .then(count => {
+               if(count === 1){
+                    res.status(200).json({
+                         message: 'Account updated!',
+                         numberOfAccountsUpdated: count
+                    })
+               } else {
+                    res.status(404).json({
+                         message: 'Account could not be updated, double-check for a valid ID and properties'
+                    })
+               }
+          })
+          .catch(err => {
+               console.log('PUT / error', err)
+               res.status(500).json({
+                    message: err.message
+               })
+          })
+     }
+)
+
 //middleware
    function requiredProperty(property) {
      return function(req, res, next){
